@@ -1,33 +1,65 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import ServiceItem from "./ServiceItem";
+import { useAuth } from "./AuthContext";
 
 const ServicesSection = () => {
   const [services, setServices] = useState([]);
   const { serviceName } = useParams();
+  const { authState } = useAuth();
+
+  const usuarioId = authState?.usuario_id;
+
+  const handleServiceRequest = async (servicioId, profesionalId) => {
+    try {
+      const response = await fetch(
+        `http://localhost/Tarea3/backend/src/index.php/reserva`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            usuario_id: usuarioId,
+            profesional_id: profesionalId,
+            servicio_id: servicioId,
+          }),
+        }
+      );
+      const data = await response.json();
+      console.log("data: ", data);
+      if (!response.ok) throw new Error(data.message || "An error occurred");
+      if (data.success === false) {
+        alert(data.message); // Show error message if reservation already exists
+      } else {
+        alert("Service request sent successfully!");
+      }
+    } catch (error) {
+      alert("Failed to send service request: " + error.message);
+    }
+  };
 
   useEffect(() => {
     const fetchServices = async () => {
-      // Construct the endpoint based on whether serviceName is provided
       const endpoint = serviceName
         ? `http://localhost/Tarea3/backend/src/index.php/services/${serviceName}`
         : `http://localhost/Tarea3/backend/src/index.php/services`;
 
       try {
-        console.log(`Fetching services from: ${endpoint}`);
+        //console.log(`Fetching services from: ${endpoint}`);
         const response = await fetch(endpoint);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        console.log("Data received:", data);
+        //console.log("Data received:", data);
 
-        // Handle the case where no services are found for a category
+        //the case where no services are found for a category
         if (
           data.message &&
           data.message === "No services found for this category"
         ) {
-          setServices([]); // Set to an empty array if no services
+          setServices([]);
         } else {
           setServices(data);
         }
@@ -54,6 +86,9 @@ const ServicesSection = () => {
                 description={service.descripcion}
                 price={service.precio}
                 profesional={service.profesional_name}
+                handleServiceRequest={handleServiceRequest}
+                servicioId={service.servicio_id}
+                profesionalId={service.profesional_id}
               />
             ))
           ) : (

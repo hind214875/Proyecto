@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 
-// Utility function to validate form fields
+// validate form fields
 const validateFields = (fields) => {
   const errors = {};
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -42,11 +42,11 @@ const AuthForm = () => {
     errors: {},
   });
 
-  // Clears the error messages when the form type is toggled
+  // Clear the error messages when the form is toggled
   const clearErrors = () =>
     setFormState((prevState) => ({ ...prevState, errors: {} }));
 
-  // Handles the form submission for both login and registration
+  // form submission for login and registration
   const handleSubmit = async (event) => {
     event.preventDefault();
     const errors = validateFields(formState);
@@ -73,7 +73,7 @@ const AuthForm = () => {
             }),
           };
 
-      console.log("Sending payload:", payload);
+      //console.log("Sending payload:", payload);
 
       const response = await fetch(endpoint, {
         method: "POST",
@@ -105,7 +105,7 @@ const AuthForm = () => {
     }
   };
 
-  // Updates the form state based on input changes
+  // Updates the form state when the inputs changes
   const handleInputChange = (event) => {
     const { name, value, type, checked } = event.target;
 
@@ -124,7 +124,7 @@ const AuthForm = () => {
     clearErrors();
   };
 
-  // Toggles between sign in and sign up mode
+  // Toggles between sign in and sign up
   const toggleMode = () => {
     setFormState((prevState) => ({
       ...prevState,
@@ -138,7 +138,7 @@ const AuthForm = () => {
     }));
   };
 
-  // Input fields with error handling display
+  // fields with error display
   const renderInputField = (name, placeholder, type = "text") => (
     <div className="form-group">
       <input

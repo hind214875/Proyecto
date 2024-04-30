@@ -10,6 +10,7 @@ import Contact from "./components/Contact";
 import AuthForm from "./components/AuthForm";
 import { AuthProvider } from "./components/AuthContext";
 import ServiceSection from "./components/ServicesSection";
+import Dashboard from "./components/ProfessionalDashboard";
 
 const App = () => {
   return (
@@ -21,6 +22,7 @@ const App = () => {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/services" element={<ServicePage />} />
           <Route path="/projects" element={<ProjectsPage />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/auth" element={<AuthForm />} />
           <Route path="/login" element={<AuthForm />} />

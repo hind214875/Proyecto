@@ -22,11 +22,11 @@ class ServicesController
                   JOIN profesional p on s.profesional_id = p.profesional_id
                   WHERE s.nombre = :category";
         $stmt = $this->db->prepare($query);
-        $stmt->bindParam(':category', $category);
+        $stmt->bindParam(":category", $category);
         $stmt->execute();
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
         if (empty($results)) {
-            return ['message' => 'No services found for this category'];
+            return ["message" => "No services found for this category"];
         } else {
             return $results;
         }
@@ -38,7 +38,7 @@ class ServicesController
         error_log(print_r($data, true));
         //validation
         if (empty($data->nombre) || empty($data->descripcion) || empty($data->precio) || empty($data->categoria_id) || empty($data->profesional_id)) {
-            return ['message' => 'Missing required fields', 'error' => true];
+            return ["message" => "Missing required fields", "error" => true];
         }
 
 
@@ -46,17 +46,16 @@ class ServicesController
         $stmt = $this->db->prepare($query);
 
         // Bind parameters
-        $stmt->bindParam(':nombre', $data->nombre);
-        $stmt->bindParam(':descripcion', $data->descripcion);
-        $stmt->bindParam(':precio', $data->precio);
-        $stmt->bindParam(':categoria_id', $data->categoria_id);
-        $stmt->bindParam(':profesional_id', $data->profesional_id);
+        $stmt->bindParam(":nombre", $data->nombre);
+        $stmt->bindParam(":descripcion", $data->descripcion);
+        $stmt->bindParam(":precio", $data->precio);
+        $stmt->bindParam(":categoria_id", $data->categoria_id);
+        $stmt->bindParam(":profesional_id", $data->profesional_id);
 
-        // Execute the query
         if ($stmt->execute()) {
-            return ['message' => 'Service created successfully', 'error' => false];
+            return ["message" => "Service created successfully", "error" => false];
         } else {
-            return ['message' => 'Unable to create the service', 'error' => true];
+            return ["message" => "Unable to create the service", "error" => true];
         }
     }
 

@@ -9,7 +9,14 @@ const ServiceItem = ({
   description,
   price,
   profesional,
+  servicioId,
+  profesionalId,
+  handleServiceRequest,
 }) => {
+  const onRequestServiceClick = () => {
+    handleServiceRequest(servicioId, profesionalId);
+  };
+
   return (
     <div className="col-sm-6 col-lg-4">
       <div className="service-item">
@@ -23,9 +30,9 @@ const ServiceItem = ({
         <p>{description}</p>
         <p>Price: {price}</p>
         <p>Professional: {profesional || "Not Assigned"}</p>
-        {/* <Link to={link} className="service-link">
-          Learn More <i className="bx bx-right-arrow-alt"></i>
-        </Link> */}
+        <button className="service-link" onClick={onRequestServiceClick}>
+          <i className="bx bx-right-arrow-alt"></i>Request Service
+        </button>
       </div>
     </div>
   );

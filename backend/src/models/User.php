@@ -17,12 +17,12 @@ class User
 
     public function create()
     {
-        // Input validation
+        //validation
         if (empty($this->nombre) || empty($this->Email) || empty($this->password) || empty($this->tipo)) {
-            return array('message' => 'All fields are required', 'error' => true);
+            return array("message" => "All fields are required", "error" => true);
         }
         if (!filter_var($this->Email, FILTER_VALIDATE_EMAIL)) {
-            return array('message' => 'Invalid email format', 'error' => true);
+            return array("message" => "Invalid email format", "error" => true);
         }
 
         // Check if user already exists
@@ -31,7 +31,7 @@ class User
         $checkStmt->bindParam(":Email", $this->Email);
         $checkStmt->execute();
         if ($checkStmt->rowCount() > 0) {
-            return array('message' => 'User already exists', 'error' => true);
+            return array("message" => "User already exists", "error" => true);
         }
 
         // Proceed with registration since user does not exist
@@ -52,9 +52,9 @@ class User
 
         if ($stmt->execute()) {
             $this->usuario_id = $this->conn->lastInsertId();
-            return array('message' => 'User registered successfully', 'error' => false);
+            return array("message" => "User registered successfully", "error" => false);
         } else {
-            return array('message' => 'Unable to register the user', 'error' => true);
+            return array("message" => "Unable to register the user", "error" => true);
         }
     }
 
@@ -66,7 +66,7 @@ class User
         $stmt = $this->conn->prepare($query);
 
         $this->Email = htmlspecialchars(strip_tags($this->Email));
-        $stmt->bindParam(':Email', $this->Email);
+        $stmt->bindParam(":Email", $this->Email);
 
         if ($stmt->execute()) {
             $num = $stmt->rowCount();
@@ -74,27 +74,26 @@ class User
             if ($num > 0) {
                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-                if (password_verify($this->password, $row['password'])) {
-                    $this->usuario_id = $row['usuario_id'];
-                    $this->nombre = $row['nombre'];
-                    $this->tipo = $row['tipo'];
+                if (password_verify($this->password, $row["password"])) {
+                    $this->usuario_id = $row["usuario_id"];
+                    $this->nombre = $row["nombre"];
+                    $this->tipo = $row["tipo"];
 
                     return array(
-                        'message' => 'User logged in successfully',
-                        'usuario_id' => $this->usuario_id,
-                        'nombre' => $this->nombre,
-                        'tipo' => $this->tipo
+                        "message" => "User logged in successfully",
+                        "usuario_id" => $this->usuario_id,
+                        "nombre" => $this->nombre,
+                        "tipo" => $this->tipo
                     );
                 } else {
-                    return array('message' => 'Login failed. Incorrect password.');
+                    return array("message" => "Login failed. Incorrect password.");
                 }
             } else {
-                return array('message' => 'Login failed. No user found with that email address.');
+                return array("message" => "Login failed. No user found with that email address.");
             }
         } else {
             $error = $stmt->errorInfo();
-            return array('message' => 'Login failed. Error executing query.', 'errorInfo' => $error[2]);
+            return array("message" => "Login failed. Error executing query.", "errorInfo" => $error[2]);
         }
     }
 }
-?>

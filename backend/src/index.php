@@ -1,17 +1,16 @@
 <?php
-// Add these headers at the top of the file before any output
-header('Access-Control-Allow-Origin: http://localhost:3000'); // Allow requests from your React app domain
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS'); // Allow methods for CORS
-header('Access-Control-Allow-Headers: Content-Type'); // Allow headers for CORS
-header('Content-Type: application/json; charset=UTF-8'); // Set the Content-Type for JSON responses
+
+header("Access-Control-Allow-Origin: http://localhost:3000");
+header("Access-Control-Allow-Methods: GET, POST, PATCH, DELETE, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
+header("Content-Type: application/json; charset=UTF-8");
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 
-// If you are sending a preflight OPTIONS request, respond with OK status
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    // Send headers and exit
-    header('HTTP/1.1 200 OK');
+
+if ($_SERVER["REQUEST_METHOD"] === "OPTIONS") {
+    header("HTTP/1.1 200 OK");
     exit;
 }
 
@@ -19,22 +18,23 @@ require_once __DIR__ . "/config/database.php";
 require_once __DIR__ . "/controllers/UserController.php";
 require_once __DIR__ . "/controllers/ProfessionalController.php";
 require_once __DIR__ . "/controllers/ServicesController.php";
-
+require_once __DIR__ . "/controllers/ReservacionController.php";
 
 $database = new Database();
 $db = $database->getConnection();
 $userController = new UserController($db);
 $professionalController = new ProfessionalController($db);
 $servicesController = new ServicesController($db);
+$reservacionController = new ReservacionController($db);
 
-$requestMethod = $_SERVER['REQUEST_METHOD'];
-$uri = urldecode(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
-$uri = explode('/', $uri);
-$uri = array_map('trim', $uri);
+$requestMethod = $_SERVER["REQUEST_METHOD"];
+$uri = urldecode(parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH));
+$uri = explode("/", $uri);
+$uri = array_map("trim", $uri);
 
-// echo '<pre>';
+// echo "<pre>";
 // var_dump($uri);
-// echo '</pre>';
+// echo "</pre>";
 
 // Routes
 if (isset($uri[5]) && $uri[5] != "") {
@@ -60,14 +60,14 @@ if (isset($uri[5]) && $uri[5] != "") {
                     break;
                 }
 
-                if (!property_exists($data, 'tipo')) {
+                if (!property_exists($data, "tipo")) {
                     echo json_encode(array("message" => "Missing tipo field", "error" => true));
                     exit;
                 }
 
                 // Check if user is professional
-                if ($data->tipo === 'professional') {
-                    //  check for professional-specific field
+                if ($data->tipo === "professional") {
+                    //  check professional especialidad input
                     if (empty($data->especialidad)) {
                         http_response_code(400);
                         echo json_encode(array("message" => "Missing required fields for professional", "error" => true));
@@ -75,12 +75,12 @@ if (isset($uri[5]) && $uri[5] != "") {
                     }
                     $response = $professionalController->registerProfessional($data->nombre, $data->email, $data->password, $data->especialidad);
                 } else {
-                    // Standard user registration
+                    // normal user registration
                     $response = $userController->register($data->nombre, $data->email, $data->password, $data->tipo);
                 }
                 echo json_encode($response);
             } else {
-                http_response_code(405); // Method Not Allowed
+                http_response_code(405);
                 echo json_encode(array("message" => "Method Not Allowed"));
             }
             break;
@@ -124,7 +124,7 @@ if (isset($uri[5]) && $uri[5] != "") {
             } else if ($requestMethod == "POST") {
                 // Decode the posted data
                 $data = json_decode(file_get_contents("php://input"));
-                // Call the method createService
+                // Call createService
                 $response = $servicesController->createService($data);
                 echo json_encode($response);
             } else {
@@ -136,6 +136,64 @@ if (isset($uri[5]) && $uri[5] != "") {
             if ($requestMethod == "GET") {
                 $response = $servicesController->getCategories();
                 echo json_encode($response);
+            } else {
+                http_response_code(405);
+                echo json_encode(array("message" => "Method Not Allowed"));
+            }
+            break;
+        case "reserva":
+            if ($requestMethod == "POST") {
+                $data = json_decode(file_get_contents("php://input"));
+
+                if (!isset($data->usuario_id, $data->profesional_id, $data->servicio_id)) {
+                    http_response_code(400);
+                    echo json_encode(array("message" => "Missing required fields", "error" => true));
+                    break;
+                }
+
+                $result = $reservacionController->createReserva($data->usuario_id, $data->profesional_id, $data->servicio_id);
+
+                if ($result["success"]) {
+                    http_response_code(201);
+                    echo json_encode(["message" => $result["message"]]);
+                } else {
+                    http_response_code(409);
+                    echo json_encode(["message" => $result["message"]]);
+                }
+            } else {
+                http_response_code(405);
+                echo json_encode(array("message" => "Method Not Allowed"));
+            }
+            break;
+        case "professionalRequests":
+            if ($requestMethod == "GET" && isset($uri[6])) {
+                $profesional_id = $uri[6];
+                $response = $professionalController->getRequestsByProfessionalId($profesional_id);
+                echo json_encode($response);
+            } else {
+                http_response_code(405);
+                echo json_encode(array("message" => "Method Not Allowed"));
+            }
+            break;
+        case "updateRequest":
+            if ($requestMethod == "PATCH" && isset($uri[6])) {
+                $reserva_id = $uri[6];
+                $data = json_decode(file_get_contents("php://input"));
+                if (!isset($data->status)) {
+                    http_response_code(400);
+                    echo json_encode(array("message" => "Missing status field", "error" => true));
+                    break;
+                }
+
+                $result = $reservacionController->updateReservaStatus($reserva_id, $data->status);
+
+                if ($result) {
+                    http_response_code(200);
+                    echo json_encode(array("message" => "Reservation status updated successfully"));
+                } else {
+                    http_response_code(503);
+                    echo json_encode(array("message" => "Unable to update reservation status"));
+                }
             } else {
                 http_response_code(405);
                 echo json_encode(array("message" => "Method Not Allowed"));

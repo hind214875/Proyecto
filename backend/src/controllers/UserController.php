@@ -17,12 +17,10 @@ class UserController
         $this->user->password = $password;
         $loginResult = $this->user->login();
 
-        if (isset($loginResult['usuario_id'])) {
-            // If a user_id is set, the login was successful
-            return array('message' => 'User logged in successfully', 'usuario_id' => $loginResult['usuario_id'], 'nombre' => $loginResult['nombre'], 'tipo' => $loginResult['tipo']);
+        if (isset($loginResult["usuario_id"])) {
+            return array("message" => "User logged in successfully", "usuario_id" => $loginResult["usuario_id"], "nombre" => $loginResult["nombre"], "tipo" => $loginResult["tipo"]);
         } else {
-            // Login failed, return the error message from the login result
-            return array('message' => $loginResult['message'], 'error' => true);
+            return array("message" => $loginResult["message"], "error" => true);
         }
     }
 
@@ -38,8 +36,8 @@ class UserController
 
         $result = $this->user->create();
 
-        if (!$result['error']) {
-            return array('message' => 'User created successfully', 'error' => false);
+        if (!$result["error"]) {
+            return array("message" => "User created successfully", "error" => false);
         } else {
             return $result;
         }

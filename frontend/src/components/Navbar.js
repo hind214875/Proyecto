@@ -58,6 +58,14 @@ const Navbar = () => {
                     </Link>
                   </li>
                 )}
+                {/* show Dashboard link just for professionals */}
+                {authState && authState.tipo === "professional" && (
+                  <li className="nav-item">
+                    <Link to="/dashboard" className="nav-link">
+                      Dashboard
+                    </Link>
+                  </li>
+                )}
                 <li className="nav-item">
                   <Link to="/contact" className="nav-link">
                     Contact
@@ -100,10 +108,6 @@ const Navbar = () => {
                   </li>
                 )}
               </ul>
-
-              <div className="side-nav">
-                <Link to="#">Book A Schedule</Link>
-              </div>
             </div>
           </nav>
         </div>
