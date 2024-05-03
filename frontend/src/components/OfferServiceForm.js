@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 
 const OfferServiceForm = ({ profesional_id }) => {
   const [categories, setCategories] = useState([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
+  const [isSubmitting] = useState(false);
+  const [successMessage] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
   const navigate = useNavigate();
 

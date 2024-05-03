@@ -85,16 +85,6 @@ if (isset($uri[5]) && $uri[5] != "") {
             }
             break;
 
-        case "loginProfessional":
-            if ($requestMethod == "POST") {
-                $data = json_decode(file_get_contents("php://input"));
-                $response = $professionalController->loginProfessional($data->email, $data->password);
-                echo json_encode($response);
-            } else {
-                http_response_code(405);
-                echo json_encode(array("message" => "Method Not Allowed"));
-            }
-            break;
         case "getProfessionalId":
             if ($requestMethod == "POST") {
                 $data = json_decode(file_get_contents("php://input"));
@@ -122,9 +112,9 @@ if (isset($uri[5]) && $uri[5] != "") {
                     echo json_encode($response);
                 }
             } else if ($requestMethod == "POST") {
-                // Decode the posted data
+
                 $data = json_decode(file_get_contents("php://input"));
-                // Call createService
+
                 $response = $servicesController->createService($data);
                 echo json_encode($response);
             } else {

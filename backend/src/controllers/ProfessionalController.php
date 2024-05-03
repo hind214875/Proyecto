@@ -32,32 +32,6 @@ class ProfessionalController extends UserController
         }
     }
 
-    public function loginProfessional($email, $password)
-    {
-        // validation
-        if (empty($email) || empty($password)) {
-            return array("message" => "Email and password are required", "error" => true);
-        }
-
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            return array("message" => "Invalid email format", "error" => true);
-        }
-
-        // Set the professional data for login
-        $this->professional->Email = $email;
-        $this->professional->password = $password;
-
-        // try to login the professional
-        $loginResult = $this->professional->loginProfessional();
-        if (is_array($loginResult) && isset($loginResult["error"]) && $loginResult["error"]) {
-            return $loginResult;
-        } elseif ($loginResult) {
-            return array("message" => "Professional logged in successfully", "error" => false, "data" => $loginResult);
-        } else {
-            return array("message" => "Login failed", "error" => true);
-        }
-    }
-
     public function getProfessionalIdByUserId($usuario_id)
     {
         return $this->professional->getProfessionalIdByUserId($usuario_id);

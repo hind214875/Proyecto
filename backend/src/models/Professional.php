@@ -44,29 +44,6 @@ class Professional extends User
         }
     }
 
-    public function loginProfessional()
-    {
-        // First, try to login as a user to verify email and password
-        if ($userDetails = parent::login()) {
-            // Then check if the user is a professional
-            $query = "SELECT * FROM " . $this->table_prof . " WHERE usuario_id = :usuario_id";
-            $stmt = $this->conn->prepare($query);
-            $stmt->bindParam(":usuario_id", $this->usuario_id);
-            $stmt->execute();
-
-            if ($stmt->rowCount() > 0) {
-                // User is a professional, return the details
-                $professionalDetails = $stmt->fetch(PDO::FETCH_ASSOC);
-                return array_merge($userDetails, $professionalDetails);
-            } else {
-                // User is not a professional
-                return array("message" => "This user is not a professional", "error" => true);
-            }
-        } else {
-            return false;
-        }
-    }
-
     public function getProfessionalIdByUserId($usuario_id)
     {
         $query = "SELECT profesional_id FROM profesional WHERE usuario_id = :usuario_id LIMIT 1";
