@@ -85,7 +85,6 @@ const Navbar = () => {
                       Welcome, {authState.userName}
                     </span>
 
-                    {/* Make sure it matches the property name from your authState */}
                     <button
                       style={{
                         backgroundColor: "#f0ad4e",

@@ -3,7 +3,6 @@ import React from "react";
 const Estimate = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Implement your form submission logic here
   };
 
   return (

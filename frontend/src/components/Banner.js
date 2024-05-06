@@ -32,7 +32,7 @@ const Banner = () => {
   const handleServiceChange = (e) => {
     const serviceName = e.target.value;
     if (serviceName !== "Choose Your Service") {
-      navigate(`/serviceSection/${serviceName}`); // Navigate to service detail page
+      navigate(`/serviceSection/${serviceName}`);  
     }
   };
 
@@ -42,7 +42,7 @@ const Banner = () => {
     // Get the selected service from the form
     const serviceName = e.target.elements.service.value;
     if (serviceName && serviceName !== "Choose Your Service") {
-      navigate(`/serviceSection/${serviceName}`); // Navigate to service detail page
+      navigate(`/serviceSection/${serviceName}`); 
     }
   };
   return (
